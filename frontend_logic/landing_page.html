@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Selling Website</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.6/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F3F4F6; 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 50px;
+            color: #1E40AF; /* Darker modern blue */
+        }
+
+        .container {
+            text-align: center;
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); 
+            width: 300px;
+        }
+
+        button {
+            font-size: 1.1rem;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 30px;
+            background-color: #3d81ef; 
+            color: white;
+            cursor: pointer;
+            width: 100%; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1)
+        }
+
+        button:hover {
+            background-color: #2563EB; /* Slightly darker blue on hover */
+            transform: translateY(2px);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Course Selling Website</h1>
+        <div>
+            <button onclick="signUp()">Sign Up</button>
+        </div>
+        <div>
+            <button onclick="signIn()">Sign In</button>
+        </div>
+    </div>
+
+    <script>
+        function signUp(){
+            window.location.href = "signup.html";
+        }
+        function signIn(){
+            window.location.href = "signin.html";
+        }
+    </script>
+</body>
+</html>
+
+
+

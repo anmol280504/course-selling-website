@@ -13,6 +13,8 @@ userRouter.post("/signup",async function(req,res){
     const password = req.body.password
     const firstName = req.body.firstName
     const lastName = req.body.lastName
+    console.log(email)
+    console.log(password)
 
     const hashpassword = await bcrypt.hash(password,5)
     try{
