@@ -85,6 +85,23 @@ userRouter.get("/purchases",userMiddleWare,async function(req,res){
 
 })
 
+userRouter.get("/name",userMiddleWare,async function(req,res){
+    const userId = req.userId
+    try{
+        const dbresponse = await UserModel.findOne({
+            _id : userId
+        })
+        
+        res.json({
+            name : dbresponse.firstName
+        })
+    }catch(e){
+        res.json({
+            message : "Error connecting to DB"
+        })
+    }   
+})
+
 module.exports = {
     userRouter : userRouter
 }

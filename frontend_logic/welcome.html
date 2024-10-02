@@ -1,9 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>
-        Welcome Page
-    </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.6/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F3F4F6; /* Light background */
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #1E40AF; /* Modern blue */
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin: 30px 0 10px;
+            color: #1E40AF;
+        }
+
+        #all-courses, #my-courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-card img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .course-title {
+            font-size: 1.5rem;
+            color: #1E40AF;
+            margin-bottom: 10px;
+        }
+
+        .course-description {
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .course-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2563EB; /* Light blue for price */
+        }
+    </style>
 </head>
 
 <body>
-    ewwef
+    <div style="display: flex;justify-content: space-between;">
+        <h1 id="welcome"></h1>
+        <button onclick="logout()"> LOGOUT </button>
+    </div>
+    <!-- All Courses Section -->
+    <div class="section-title">All Courses</div>
+    <div id="all-courses">All courses available</div>
+
+    <!-- My Purchases Section -->
+    <div class="section-title">My Purchases</div>
+    <div id="my-courses"></div>
+
+    <script>
+        function logout(){
+            localStorage.removeItem("token")
+            window.location.href = "signin.html"
+        }
+        
+        async function fetchname(){
+            const response = await axios.get("http://localhost:3000/user/name",{
+                headers : {
+                    token : localStorage.getItem("token")
+                }
+            })
+            const name = response.data.name
+
+            const parEl = document.getElementById("welcome")
+            parEl.innerHTML = "Welcome, " + name 
+        }
+        async function getallposts() {
+            const parEl = document.getElementById("all-courses");
+            parEl.innerHTML = ""; // Clear any previous content
+            try {
+                const response = await axios.get("http://localhost:3000/course/preview");
+                const courses = response.data.courses; // Assuming response contains course data in 'courses'
+                const len = courses.length;
+
+                for (let i = 0; i < len; i++) {
+                    const { title, description, price, imageUrl } = courses[i];
+
+                    const divEl = document.createElement("div");
+                    divEl.classList.add("course-card");
+
+                    const imgEl = document.createElement("img");
+                    imgEl.src = imageUrl;
+                    divEl.appendChild(imgEl);
+
+                    const titleEl = document.createElement("div");
+                    titleEl.classList.add("course-title");
+                    titleEl.innerHTML = title;
+                    divEl.appendChild(titleEl);
+
+                    const descEl = document.createElement("div");
+                    descEl.classList.add("course-description");
+                    descEl.innerHTML = description;
+                    divEl.appendChild(descEl);
+
+                    const priceEl = document.createElement("div");
+                    priceEl.classList.add("course-price");
+                    priceEl.innerHTML = "Rs " + price;
+                    divEl.appendChild(priceEl);
+
+                    parEl.appendChild(divEl);
+                }
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+            }
+        }
+
+        async function mycourses() {
+            const parEl = document.getElementById("my-courses");
+            parEl.innerHTML = ""; // Clear any previous content
+            try {
+                const response = await axios.get("http://localhost:3000/user/purchases", {
+                    headers: {
+                        token: localStorage.getItem("token")
+                    }
+                });
+                const courses = response.data.purchases; // Assuming response contains purchased courses in 'purchases'
+                const len = courses.length;
+
+                for (let i = 0; i < len; i++) {
+                    const { title, description, price, imageUrl } = courses[i];
+
+                    const divEl = document.createElement("div");
+                    divEl.classList.add("course-card");
+
+                    const imgEl = document.createElement("img");
+                    imgEl.src = imageUrl;
+                    divEl.appendChild(imgEl);
+
+                    const titleEl = document.createElement("div");
+                    titleEl.classList.add("course-title");
+                    titleEl.innerHTML = title;
+                    divEl.appendChild(titleEl);
+
+                    const descEl = document.createElement("div");
+                    descEl.classList.add("course-description");
+                    descEl.innerHTML = description;
+                    divEl.appendChild(descEl);
+
+                    const priceEl = document.createElement("div");
+                    priceEl.classList.add("course-price");
+                    priceEl.innerHTML = "Rs " + price;
+                    divEl.appendChild(priceEl);
+
+                    parEl.appendChild(divEl);
+                }
+            } catch (error) {
+                console.error('Error fetching purchased courses:', error);
+            }
+        }
+        fetchname()
+        getallposts();
+        mycourses();
+    </script>
 </body>
+</html>
+

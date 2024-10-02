@@ -72,7 +72,7 @@
 <body>
 
     <div class="container">
-        <h1>User Sign Up</h1>
+        <h1>Creator Sign Up</h1>
         <input id="1" type="text" placeholder="First Name">
         <input id="2" type="text" placeholder="Last Name">
         <input id="3" type="text" placeholder="Email">
@@ -88,7 +88,7 @@
             const password = document.getElementById("4").value;
             
             try {
-                const response = await axios.post("http://localhost:3000/user/signup", {
+                const response = await axios.post("http://localhost:3000/admin/signup", {
                     firstName: firstName,
                     lastName: lastName,
                     email: email,
