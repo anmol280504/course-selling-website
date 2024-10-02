@@ -5,7 +5,7 @@ const {jwt_secret_user} = require("../config")
 const {userMiddleWare} = require("../middlewares/user")
 const userRouter = express.Router()
 const {UserModel} = require("../db")
-const {PurchaseModel} = require("../db")
+const {PurchaseModel,CourseModel} = require("../db")
 const course = require("./course")
 
 userRouter.post("/signup",async function(req,res){
@@ -70,12 +70,17 @@ userRouter.post("/signin",async function(req,res){
 userRouter.get("/purchases",userMiddleWare,async function(req,res){
     const userId = req.userId
     
-    const courses = await PurchaseModel.find({
+    const user = await PurchaseModel.find({
         userId : userId
+    })
+    
+    console.log(user)
+    const purchase = await CourseModel.find({
+        _id : {"$in" : user.map(x => x.courseId)}
     })
 
     res.json({
-        purchases : courses
+        purchases : purchase
     })
 
 })

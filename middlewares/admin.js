@@ -7,7 +7,7 @@ function adminMiddleWare(req,res,next){
         req.userId = user.userId
         next()
     }catch(e){
-        res.json({
+        res.status(403).json({
             message : "invalid JWT"
         })
     }
