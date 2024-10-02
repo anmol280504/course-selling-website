@@ -117,6 +117,24 @@ adminRouter.get("/course/bulk",adminMiddleWare,async function(req,res){
     })
 })  
 
+adminRouter.get("/name",adminMiddleWare,async function(req,res){
+    const userId = req.userId
+    try{
+        const dbresponse = await AdminModel.findOne({
+            _id : userId
+        })
+        
+        res.json({
+            firstname : dbresponse.firstName,
+            lastname : dbresponse.lastName
+        })
+    }catch(e){
+        res.json({
+            message : "Error connecting to DB"
+        })
+    }   
+})
+
 module.exports = {
     adminRouter : adminRouter
 }

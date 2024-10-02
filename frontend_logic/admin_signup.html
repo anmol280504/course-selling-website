@@ -95,6 +95,7 @@
                     password: password
                 });
                 alert(response.data.message);
+                document.window.href = "landing_page.html"
             } catch (error) {
                 alert("Error: " + error.response.data.message);
             }

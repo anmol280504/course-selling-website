@@ -1,0 +1,166 @@
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.6/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F3F4F6; /* Light background */
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #1E40AF; /* Modern blue */
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin: 30px 0 10px;
+            color: #1E40AF;
+        }
+
+        #all-courses, #my-courses {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-card img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .course-title {
+            font-size: 1.5rem;
+            color: #1E40AF;
+            margin-bottom: 10px;
+        }
+
+        .course-description {
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .course-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2563EB; /* Light blue for price */
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            background-color: #1E40AF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2563EB;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="display: flex;justify-content: space-between;">
+        <h1 id="welcome"></h1>
+        <span>
+            <a href="coursePublish.html">Publish a new Course</a>
+        </span>
+        <button onclick="logout()"> LOGOUT </button>
+    </div>
+    
+    <!-- All Courses Section -->
+    <div class="section-title">Courses Published by You</div>
+    <div id="all-courses"></div>
+
+    <script>
+        function logout(){
+            localStorage.removeItem("token")
+            window.location.href = "landing_page.html"
+        }
+        async function fetchname() {
+            try {
+                const response = await axios.get("http://localhost:3000/admin/name", {
+                    headers: {
+                        token: localStorage.getItem("token")
+                    }
+                });
+                const firstname = response.data.firstname;
+                const lastname = response.data.lastname
+                document.getElementById("welcome").textContent = "Welcome, " + firstname +" "+ lastname; 
+            } catch (error) {
+                console.error("Error fetching name:", error);
+            }
+        }
+
+        async function getallcourses() {
+            const parEl = document.getElementById("all-courses");
+            parEl.innerHTML = ""; // Clear any previous content
+            try {
+                const response = await axios.get("http://localhost:3000/admin/course/bulk",{
+                    headers : {
+                        token : localStorage.getItem("token")
+                    }
+                });
+                const courses = response.data.courses;
+            
+                courses.forEach(course => {
+                    const { title, description, price, imageUrl, _id } = course;
+
+                    const divEl = document.createElement("div");
+                    divEl.classList.add("course-card");
+
+                    const imgEl = document.createElement("img");
+                    imgEl.src = imageUrl;
+                    divEl.appendChild(imgEl);
+
+                    const titleEl = document.createElement("div");
+                    titleEl.classList.add("course-title");
+                    titleEl.textContent = title;
+                    divEl.appendChild(titleEl);
+
+                    const descEl = document.createElement("div");
+                    descEl.classList.add("course-description");
+                    descEl.textContent = description;
+                    divEl.appendChild(descEl);
+
+                    const priceEl = document.createElement("div");
+                    priceEl.classList.add("course-price");
+                    priceEl.textContent = "Rs " + price;
+                    divEl.appendChild(priceEl);
+
+                    parEl.appendChild(divEl);
+                });
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+            }
+        }
+        fetchname()
+        getallcourses()
+
+    </script>
+</body>

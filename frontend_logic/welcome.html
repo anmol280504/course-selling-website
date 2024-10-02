@@ -67,6 +67,20 @@
             font-weight: bold;
             color: #2563EB; /* Light blue for price */
         }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            background-color: #1E40AF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2563EB;
+        }
     </style>
 </head>
 
@@ -75,6 +89,7 @@
         <h1 id="welcome"></h1>
         <button onclick="logout()"> LOGOUT </button>
     </div>
+    
     <!-- All Courses Section -->
     <div class="section-title">All Courses</div>
     <div id="all-courses">All courses available</div>
@@ -85,31 +100,50 @@
 
     <script>
         function logout(){
-            localStorage.removeItem("token")
-            window.location.href = "signin.html"
+            localStorage.removeItem("token");
+            window.location.href = "landing_page.html";
+        }
+
+        async function purchaseNewCourse(courseID) {
+            try {
+                await axios.post("http://localhost:3000/course/purchase", {
+                    courseId: courseID
+                }, {
+                    headers: {
+                        token: localStorage.getItem("token")
+                    }
+                });
+                alert("Course purchased successfully");
+                mycourses();
+            } catch (error) {
+                console.error("Error purchasing course:", error);
+            }
         }
         
-        async function fetchname(){
-            const response = await axios.get("http://localhost:3000/user/name",{
-                headers : {
-                    token : localStorage.getItem("token")
-                }
-            })
-            const name = response.data.name
-
-            const parEl = document.getElementById("welcome")
-            parEl.innerHTML = "Welcome, " + name 
+        async function fetchname() {
+            try {
+                const response = await axios.get("http://localhost:3000/user/name", {
+                    headers: {
+                        token: localStorage.getItem("token")
+                    }
+                });
+                const firstname = response.data.firstname;
+                const lastname = response.data.lastname
+                document.getElementById("welcome").textContent = "Welcome, " + firstname +" "+ lastname; 
+            } catch (error) {
+                console.error("Error fetching name:", error);
+            }
         }
-        async function getallposts() {
+
+        async function getallcourses() {
             const parEl = document.getElementById("all-courses");
             parEl.innerHTML = ""; // Clear any previous content
             try {
                 const response = await axios.get("http://localhost:3000/course/preview");
-                const courses = response.data.courses; // Assuming response contains course data in 'courses'
-                const len = courses.length;
+                const courses = response.data.courses;
 
-                for (let i = 0; i < len; i++) {
-                    const { title, description, price, imageUrl } = courses[i];
+                courses.forEach(course => {
+                    const { title, description, price, imageUrl, _id } = course;
 
                     const divEl = document.createElement("div");
                     divEl.classList.add("course-card");
@@ -120,21 +154,26 @@
 
                     const titleEl = document.createElement("div");
                     titleEl.classList.add("course-title");
-                    titleEl.innerHTML = title;
+                    titleEl.textContent = title;
                     divEl.appendChild(titleEl);
 
                     const descEl = document.createElement("div");
                     descEl.classList.add("course-description");
-                    descEl.innerHTML = description;
+                    descEl.textContent = description;
                     divEl.appendChild(descEl);
 
                     const priceEl = document.createElement("div");
                     priceEl.classList.add("course-price");
-                    priceEl.innerHTML = "Rs " + price;
+                    priceEl.textContent = "Rs " + price;
                     divEl.appendChild(priceEl);
 
+                    const buttonEl = document.createElement("button");
+                    buttonEl.textContent = "Buy";
+                    buttonEl.addEventListener("click", () => purchaseNewCourse(_id));
+                    divEl.appendChild(buttonEl);
+
                     parEl.appendChild(divEl);
-                }
+                });
             } catch (error) {
                 console.error('Error fetching courses:', error);
             }
@@ -149,11 +188,10 @@
                         token: localStorage.getItem("token")
                     }
                 });
-                const courses = response.data.purchases; // Assuming response contains purchased courses in 'purchases'
-                const len = courses.length;
+                const courses = response.data.purchases;
 
-                for (let i = 0; i < len; i++) {
-                    const { title, description, price, imageUrl } = courses[i];
+                courses.forEach(course => {
+                    const { title, description, price, imageUrl } = course;
 
                     const divEl = document.createElement("div");
                     divEl.classList.add("course-card");
@@ -164,29 +202,32 @@
 
                     const titleEl = document.createElement("div");
                     titleEl.classList.add("course-title");
-                    titleEl.innerHTML = title;
+                    titleEl.textContent = title;
                     divEl.appendChild(titleEl);
 
                     const descEl = document.createElement("div");
                     descEl.classList.add("course-description");
-                    descEl.innerHTML = description;
+                    descEl.textContent = description;
                     divEl.appendChild(descEl);
 
                     const priceEl = document.createElement("div");
                     priceEl.classList.add("course-price");
-                    priceEl.innerHTML = "Rs " + price;
+                    priceEl.textContent = "Rs " + price;
                     divEl.appendChild(priceEl);
 
                     parEl.appendChild(divEl);
-                }
+                });
             } catch (error) {
                 console.error('Error fetching purchased courses:', error);
             }
         }
-        fetchname()
-        getallposts();
+
+        // Initial function calls
+        fetchname();
+        getallcourses();
         mycourses();
     </script>
 </body>
 </html>
+
 

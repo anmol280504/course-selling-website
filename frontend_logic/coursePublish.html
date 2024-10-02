@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Course</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.6/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #F3F4F6; /* Light background */
+            color: #333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #1E40AF; /* Modern blue */
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #3d81ef;
+            color: white;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #2563EB; /* Slightly darker blue on hover */
+        }
+
+        button:disabled {
+            background-color: #999; /* Greyed out when disabled */
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Publish a New Course</h1>
+        <div>
+            <input id="title" type="text" placeholder="Title of Course" required>
+            <input id="description" type="text" placeholder="Description of Course" required>
+            <input id="imageUrl" type="text" placeholder="Thumbnail Image (URL)" required>
+            <input id="price" type="number" placeholder="Price of Course (INR)" required>
+            <button id="publish-btn" onclick="publishNewCourse()">Publish</button>
+        </div>
+    </div>
+
+    <script>
+        async function publishNewCourse() {
+            const title = document.getElementById("title").value;
+            const description = document.getElementById("description").value;
+            const imageUrl = document.getElementById("imageUrl").value;
+            const price = document.getElementById("price").value;
+            const publishBtn = document.getElementById("publish-btn");
+
+            // Form validation
+            if (!title || !description || !imageUrl || !price) {
+                alert("Please fill out all the fields.");
+                return;
+            }
+
+            // Disable button to avoid multiple clicks
+            publishBtn.disabled = true;
+            publishBtn.innerHTML = "Publishing...";
+
+            try {
+                await axios.post("http://localhost:3000/admin/course", {
+                    title: title,
+                    description: description,
+                    imageUrl: imageUrl,
+                    price: price
+                }, {
+                    headers: {
+                        token: localStorage.getItem("token")
+                    }
+                });
+
+                alert("Course Published Successfully");
+                window.location.href = "welcomeadmin.html"; // Redirect to the admin welcome page
+            } catch (error) {
+                console.error("Error publishing course:", error);
+                alert("An error occurred while publishing the course. Please try again.");
+            } finally {
+                publishBtn.disabled = false; // Re-enable button
+                publishBtn.innerHTML = "Publish";
+            }
+        }
+    </script>
+</body>
+</html>
+

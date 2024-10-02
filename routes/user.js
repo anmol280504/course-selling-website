@@ -93,7 +93,8 @@ userRouter.get("/name",userMiddleWare,async function(req,res){
         })
         
         res.json({
-            name : dbresponse.firstName
+            firstname : dbresponse.firstName,
+            lastname : dbresponse.lastName
         })
     }catch(e){
         res.json({
