@@ -1,4 +1,5 @@
-
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -11,25 +12,50 @@
             background-color: #F3F4F6; /* Light background */
             color: #333;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         h1 {
-            text-align: center;
             font-size: 2.5rem;
             color: #1E40AF; /* Modern blue */
             margin-bottom: 20px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 30px;
+        }
+
+        .header-container h1 {
+            flex: 1;
+        }
+
+        .header-container span,
+        .header-container button {
+            margin-left: 20px;
         }
 
         .section-title {
             font-size: 1.8rem;
             margin: 30px 0 10px;
             color: #1E40AF;
+            text-align: center;
+            width: 100%;
         }
 
-        #all-courses, #my-courses {
+        #all-courses {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            width: 100%;
+            max-width: 1200px;
         }
 
         .course-card {
@@ -38,6 +64,7 @@
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s, box-shadow 0.2s;
+            text-align: center;
         }
 
         .course-card:hover {
@@ -65,7 +92,7 @@
         .course-price {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #2563EB; /* Light blue for price */
+            color: #2563EB;
         }
 
         button {
@@ -81,27 +108,40 @@
         button:hover {
             background-color: #2563EB;
         }
+
+        a {
+            text-decoration: none;
+            color: white;
+            background-color: #1E40AF;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background-color: #2563EB;
+        }
     </style>
 </head>
 
 <body>
-    <div style="display: flex;justify-content: space-between;">
+    <div class="header-container">
         <h1 id="welcome"></h1>
         <span>
             <a href="coursePublish.html">Publish a new Course</a>
         </span>
-        <button onclick="logout()"> LOGOUT </button>
+        <button onclick="logout()">LOGOUT</button>
     </div>
-    
+
     <!-- All Courses Section -->
     <div class="section-title">Courses Published by You</div>
     <div id="all-courses"></div>
 
     <script>
-        function logout(){
-            localStorage.removeItem("token")
-            window.location.href = "landing_page.html"
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "landing_page.html";
         }
+
         async function fetchname() {
             try {
                 const response = await axios.get("http://localhost:3000/admin/name", {
@@ -110,8 +150,8 @@
                     }
                 });
                 const firstname = response.data.firstname;
-                const lastname = response.data.lastname
-                document.getElementById("welcome").textContent = "Welcome, " + firstname +" "+ lastname; 
+                const lastname = response.data.lastname;
+                document.getElementById("welcome").textContent = "Welcome, " + firstname + " " + lastname;
             } catch (error) {
                 console.error("Error fetching name:", error);
             }
@@ -121,13 +161,13 @@
             const parEl = document.getElementById("all-courses");
             parEl.innerHTML = ""; // Clear any previous content
             try {
-                const response = await axios.get("http://localhost:3000/admin/course/bulk",{
-                    headers : {
-                        token : localStorage.getItem("token")
+                const response = await axios.get("http://localhost:3000/admin/course/bulk", {
+                    headers: {
+                        token: localStorage.getItem("token")
                     }
                 });
                 const courses = response.data.courses;
-            
+
                 courses.forEach(course => {
                     const { title, description, price, imageUrl, _id } = course;
 
@@ -159,8 +199,11 @@
                 console.error('Error fetching courses:', error);
             }
         }
-        fetchname()
-        getallcourses()
 
+        fetchname();
+        getallcourses();
     </script>
 </body>
+
+</html>
+
